@@ -19,7 +19,8 @@
           @delete-device="deleteDevice(index)"
         />
         <span class="device-number">{{ index + 1 }}</span>
-        <!-- Display device number -->
+        <span class="device-date">Added on: {{ device.addedAt }}</span>
+        <!-- Display date -->
       </li>
     </ul>
   </div>
@@ -45,7 +46,21 @@ export default {
     const addDevice = () => {
       const deviceName = prompt("Enter device name:");
       if (deviceName && deviceName.trim() !== "") {
-        const newDevice = { name: deviceName, nodes: [] };
+        // Get the current date and time
+        const now = new Date();
+        const formattedDate = now.toLocaleString("en-GB", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+
+        const newDevice = {
+          name: deviceName,
+          nodes: [],
+          addedAt: formattedDate,
+        };
         devices.value.push(newDevice);
         localStorage.setItem("devices", JSON.stringify(devices.value));
       } else {
@@ -145,6 +160,12 @@ export default {
         margin-left: 10px;
         font-weight: bold;
         color: #555;
+      }
+
+      .device-date {
+        margin-left: 20px;
+        font-size: 14px;
+        color: #888;
       }
     }
   }
