@@ -47,18 +47,20 @@ export default {
   setup(props, { emit }) {
     const isEditing = ref(false);
     const localDeviceName = ref(props.device.name);
-    const localNodes = ref([...props.device.nodes]);
+    const localNodes = ref([]); // Initialize with an empty array
 
     onMounted(() => {
+      // Load stored nodes for the specific device
       const storedNodes = JSON.parse(
         localStorage.getItem(`nodes_${props.device.id}`)
       );
       if (storedNodes) {
-        localNodes.value = storedNodes;
+        localNodes.value = storedNodes; // Use the stored nodes if available
       }
     });
 
     const saveNodesToLocalStorage = () => {
+      // Save nodes only for the current device
       localStorage.setItem(
         `nodes_${props.device.id}`,
         JSON.stringify(localNodes.value)
@@ -77,15 +79,16 @@ export default {
     const confirmDeleteDevice = () => {
       if (confirm("Are you sure you want to delete this device?")) {
         emit("delete-device");
-        localStorage.removeItem(`nodes_${props.device.id}`);
+        localStorage.removeItem(`nodes_${props.device.id}`); // Remove nodes for this device
       }
     };
 
     const addNode = () => {
-      const newNode = { name: prompt("Enter node name:") };
-      if (newNode.name) {
+      const newNodeName = prompt("Enter node name:");
+      if (newNodeName) {
+        const newNode = { name: newNodeName };
         localNodes.value.push(newNode);
-        saveNodesToLocalStorage();
+        saveNodesToLocalStorage(); // Save the new node
       }
     };
 
@@ -95,7 +98,8 @@ export default {
         localNodes.value[index].name
       );
       if (newName) {
-        localNodes.value[index].name = saveNodesToLocalStorage();
+        localNodes.value[index].name = newName; // Update the node name
+        saveNodesToLocalStorage(); // Save changes
       }
     };
 
@@ -106,8 +110,8 @@ export default {
     };
 
     const deleteNode = (index) => {
-      localNodes.value.splice(index, 1);
-      saveNodesToLocalStorage();
+      localNodes.value.splice(index, 1); // Remove the node from the list
+      saveNodesToLocalStorage(); // Save changes
     };
 
     return {
@@ -220,13 +224,10 @@ export default {
     padding: 0;
 
     .node-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
       padding: 10px;
       border: 1px solid #ccc;
       border-radius: 5px;
-      margin-top: 5px;
+      margin-top: 25px;
       background-color: #f0f0f0;
 
       .button-container {
